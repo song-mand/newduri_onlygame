@@ -1,0 +1,14 @@
+{
+  "name": "newduri-village-prototype",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Local-only Duri village gamification web prototype",
+  "scripts": {
+    "dev": "node server.mjs",
+    "start": "node server.mjs",
+    "test": "node --test tests/model.test.cjs tests/features.test.cjs",
+    "check": "node --check data.js && node --check model.js && node --check art.js && node --check features.js && node --check app.js"
+  },
+  "engines": { "node": ">=18" }
+}
+

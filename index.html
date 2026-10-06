@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f8f8f2">
+<title>두리 — 둘이 모아, 자라는 마을</title>
+<link rel="stylesheet" href="./style.css">
+<link rel="stylesheet" href="./features.css">
+<script defer src="./data.js"></script><script defer src="./model.js"></script>
+<script defer src="./art.js"></script><script defer src="./features.js"></script><script defer src="./app.js"></script>
+</head>
+<body>
+<header class="header">
+  <a class="brand" href="#map" aria-label="두리 지도"><span class="brand-mark">d<span>ü</span>ri<span class="brand-dot">.</span></span></a>
+  <nav aria-label="주 메뉴">
+    <button class="nav-button active" data-view="map"><span>⌘</span> 지도</button>
+    <button class="nav-button" data-view="collection"><span>✧</span> 수집함 <b id="collection-count">0</b></button>
+  </nav>
+</header>
+<main>
+  <section class="workspace">
+    <div class="page-heading">
+      <div><div class="eyebrow" id="eyebrow"></div><h1 id="page-title">지도</h1><p id="page-description"></p><p class="design-notice">마을의 디자인은 추후 변경</p></div>
+      <button class="quiet-button" id="help-button" aria-label="프로토타입 이용 안내">? <span>이용 안내</span></button>
+    </div>
+    <section class="scene-card" id="map-view" aria-label="지역 선택 지도">
+      <div class="scene-top"><span class="pill"><i class="green-dot"></i> 지역 지도</span><span class="subtle">지역 클릭 → 마을 입장</span></div>
+      <div class="map-layout">
+        <div class="region-picker"><div class="eyebrow">시·도</div><label class="sr-only" for="region-select">시·도 선택</label><select id="region-select"></select><div class="eyebrow city-label">도시</div><div class="city-list" id="city-list"></div><p class="map-note">도시 이름 또는 지도 표식을 클릭하면<br>해당 마을로 이동합니다.</p></div>
+        <svg id="korea-map" viewBox="70 30 500 630" role="group" aria-label="대한민국 지역 선택 개념도"></svg>
+      </div>
+      <div class="map-bottom"><small>지역 위치를 단순화한 개념도</small></div>
+    </section>
+    <section class="scene-card hidden" id="village-view" aria-label="두리 마을">
+      <div class="scene-top"><button class="pill back-map" data-view="map">← 지도</button><span class="village-address" id="village-address"></span><span class="pill weather" id="scene-status"></span></div>
+      <div class="village-canvas" id="village-canvas" tabindex="0" role="application" aria-label="두리 마을. 방향키 또는 W A S D로 이동, 도로를 누르면 자동으로 걸어갑니다.">
+        <svg id="village-svg" viewBox="0 0 1000 750" aria-label="파스텔 색상의 입체 마을"><g id="ground-layer"></g><g id="decoration-layer"></g><g id="depth-layer"></g><g id="destination-layer"></g></svg>
+        <div class="movement"><span>두리와 산책하기</span><div class="dpad"><button data-direction="150" aria-label="왼쪽 위 150도 이동">↖</button><button data-direction="30" aria-label="오른쪽 위 30도 이동">↗</button><button data-direction="210" aria-label="왼쪽 아래 210도 이동">↙</button><button data-direction="330" aria-label="오른쪽 아래 330도 이동">↘</button></div></div>
+      </div>
+      <div class="village-bottom"><span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> / 방향키 / 도로 클릭</span><label>걷기 <select id="fps-select" aria-label="캐릭터 애니메이션 프레임"><option value="20">20 FPS</option><option value="30">30 FPS</option></select></label></div>
+    </section>
+    <section class="scene-card collection-view hidden" id="collection-view" aria-label="수집한 보상">
+      <div class="scene-top"><span class="pill">수집함</span><span class="subtle" id="collection-city"></span></div>
+      <div class="collection-destination"><label for="collection-city-select">배치할 마을</label><select id="collection-city-select"></select></div>
+      <section class="character-section"><h2>캐릭터</h2><p>캐릭터를 선택해 현재 마을에 배치하거나 해제합니다.</p><div id="character-grid" class="character-grid"></div></section>
+      <div class="collection-heading"><h2>배지 · 트로피</h2></div><div id="reward-grid" class="reward-grid"></div>
+    </section>
+  </section>
+  <aside class="inspector" aria-label="공유 수 테스트 패널">
+    <div class="inspector-label"><span class="eyebrow">마을 정보</span><span class="tiny-chip">체험 모드</span></div>
+    <div class="city-title"><h2 id="selected-city-title">서울 마을</h2><span class="city-flower">✿</span></div>
+    <p class="inspector-subtitle" id="selected-region-name">서울</p>
+    <div class="city-stats"><div><strong id="total-shares">0</strong><span>모은 공유</span></div><div><strong id="grown-buildings">0<small>/5</small></strong><span>성장한 건물</span></div><div><strong id="city-rewards">0<small>/11</small></strong><span>수집한 선물</span></div></div>
+    <button id="enter-village" class="primary-button">마을 화면으로 이동 <span>↗</span></button>
+    <div class="section-divider"></div>
+    <div class="section-heading"><h3>마을 성장 실험실</h3><span class="tiny-chip">± 공유</span></div>
+    <p class="helper">공유 수를 조절해 건물 단계를 확인합니다.</p>
+    <div id="category-controls" class="category-controls"></div>
+    <div class="thresholds"><span><i></i> Lv.1 <b>0</b></span><span><i></i> Lv.2 <b>3</b></span><span><i></i> Lv.3 <b>7</b></span><small>카테고리별 누적 공유 횟수</small></div>
+    <div class="demo-actions"><button id="grow-all">✧ 모두 3단계로</button><button id="reset-city">이 도시 초기화</button></div>
+    <section class="environment-controls"><h3>마을 환경 테스트</h3><label>계절<select id="season-select"><option value="auto">자동 · 한국 날짜</option><option value="spring">봄</option><option value="summer">여름</option><option value="autumn">가을</option><option value="winter">겨울</option></select></label><label>이벤트<select id="event-select"><option value="auto">자동 · 식목일</option><option value="none">없음</option><option value="arbor">식목일</option><option value="festival">마을 축제</option></select></label><p id="environment-summary"></p><p>특정 건물만 더 높은 단계이면 해당 카테고리를 반영합니다. 동률이면 기본 환경입니다.</p></section>
+    <details class="mock-places"><summary>장소 공유·방문 테스트 <span>10</span></summary><p>모두 가상 장소입니다. 버튼은 공유·방문 이벤트를 모의 실행하며, 실제 방문을 인증하지 않습니다. 같은 장소의 각 버튼은 한 번만 반영됩니다.</p><ul id="place-list"></ul></details>
+    <p class="prototype-note">실제 공유·지도 연동 없이 마을 성장만 체험하는 프로토타입입니다. 공유 수는 장소 수와 별도로 조절할 수 있어요.</p>
+    <p class="storage-warning hidden" id="storage-warning" role="status">이 브라우저에서는 자동 저장을 사용할 수 없어요. 현재 화면에서 체험은 가능합니다.</p>
+  </aside>
+</main>
+<div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+<div id="character-unlock-notice" class="character-unlock-notice hidden" role="status" aria-live="polite"><span id="character-unlock-text"></span><button id="open-unlocked-characters">수집함에서 배치</button><button id="dismiss-character-unlock" aria-label="캐릭터 해금 알림 닫기">×</button></div>
+<dialog id="help-dialog"><button class="close-dialog" aria-label="안내 닫기">×</button><h2>이용 안내</h2><p>① 지도 표식이나 도시 이름을 클릭하면 마을로 이동합니다. 도의 표식은 선택 중인 도시 또는 해당 도의 첫 번째 도시로 연결됩니다. 시·도 선택 메뉴로 다른 도시를 고를 수 있습니다.</p><p>② 마을 오른쪽 <b>+ / −</b>로 건물 단계를 조절합니다. 공유 3회에 2단계, 7회에 3단계가 됩니다.</p><p>③ 방향키 · WASD · 화면 이동 버튼 또는 도로 클릭으로 이동합니다.</p><p>④ 수집함에서 해금 조건을 확인하고 캐릭터를 클릭해 도시별로 배치·해제합니다.</p><p>⑤ 마을 오른쪽에서 계절·이벤트와 가상 장소의 공유·방문을 테스트합니다.</p><div class="dialog-note">공유 수를 줄여도 획득 보상과 해금 캐릭터는 유지됩니다. ‘이 도시 초기화’는 해당 도시의 공유 수·배지·트로피를 초기화합니다. 전역 캐릭터 해금과 장소 이벤트 기록은 유지합니다. 모든 장소는 가상 데이터이며 보상에 금전적 가치는 없습니다.</div><button class="primary-button close-help">닫기</button></dialog>
+<dialog id="reset-dialog"><h2>도시 초기화</h2><p>현재 도시의 공유 수와 배지·트로피·아치만 초기화합니다.<br>캐릭터 해금·배치, 장소 이벤트 기록 및 다른 도시 기록은 유지합니다.</p><div class="dialog-actions"><button id="cancel-reset" class="quiet-button">취소</button><button id="confirm-reset" class="primary-button">초기화</button></div></dialog>
+<noscript>이 프로토타입을 이용하려면 브라우저의 JavaScript를 활성화해주세요.</noscript>
+</body></html>
+
